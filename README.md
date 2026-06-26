@@ -11,17 +11,28 @@ https://github.com/user-attachments/assets/db68f982-0b94-42ba-af32-3d2d90c282f3
 - **3D globe** and **Flat 2D world map** with animated attack arcs, sensor pulses, and impact rings. Click-drag to rotate, scroll to zoom, plus an optional **auto-rotate** toggle in TWEAKS.
 - **Map styles:** Globe, Blue Marble, Night Lights, and Flat 2D.
 - **Dark / Light theme** across the whole interface.
+
+![Tweaks](imgs/Tweaks.PNG)
+
 - **Auto-discovered honeypot sensors** upon applying the honeypot's WebSocket URL, geolocated and placed on the map automatically with activity.
 - **Live event feed** per event: timestamp, source country + city, flag, target sensor, port, source IP, event type, and detail.
 - **Click any event for the full record:** Selecting a row in the feed opens an **Event Detail** panel showing the full JSON for that event.
 - **Updated counters:** total attacks, attacks/min, unique source IPs, sensors online, login fails, login success, connection attempts, commands.
+
+![Updated counters](imgs/Updatedcounters.PNG)
+
 - **Commands explorer:** a **Commands Used** panel with total executed, unique-command count, and the most-run commands ranked by frequency.
 
-![Commands Used](cmdsused.PNG)
+![Commands Used](imgs/cmdsused.PNG)
 
 - **Rankings:** top ports targeted, top source IP addresses, top origin countries, and top credentials tried.
+
+![Rankings1](imgs/Rankings1.PNG)
+![Rankings2](imgs/Rankings2.PNG)
+
 - **IP REPUTATION panel:** scores the top source IPs for maliciousness from server-side enrichment (**Spamhaus DROP, AbuseIPDB, VirusTotal**).
-![Reputation](reputation.PNG)
+
+![Reputation](imgs/reputation.PNG)
 
 - **Raw logs drawer** streams the `cowrie.json` and `opencanary.log` line for every event, with the option to pause, clear, load a new `.json` file for replay, **and download the captured logs**.
 - **Embedded country flags** (offline-safe; no external CDN required).
