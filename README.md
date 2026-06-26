@@ -95,7 +95,7 @@ WorkingDirectory=/home/cowrie/cowrie
 Environment=COWRIE_LOG=/home/cowrie/cowrie/var/log/cowrie/cowrie.json
 Environment=OPENCANARY_LOGS=/var/tmp/opencanary.log
 EnvironmentFile=/etc/honeypot-bridge/reputation.env
-ExecStart=/home/cowrie/ws-env/bin/python /home/cowrie/cowrie_ws.py
+ExecStart=/home/cowrie/ws-env/bin/python /home/cowrie/websocket.py
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
