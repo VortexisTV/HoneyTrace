@@ -1,0 +1,20 @@
+[Unit]
+Description=Honeypot JSON WebSocket Bridge
+After=network-online.target cowrie.service opencanary.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cowrie
+Group=cowrie
+WorkingDirectory=/home/cowrie/cowrie
+Environment=COWRIE_LOG=/home/cowrie/cowrie/var/log/cowrie/cowrie.json
+Environment=OPENCANARY_LOGS=/var/tmp/opencanary.log
+ExecStart=/home/cowrie/ws-env/bin/python /home/cowrie/websocket.py
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target
