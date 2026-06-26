@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/db68f982-0b94-42ba-af32-3d2d90c282f3
 - **3D globe** and **Flat 2D world map** with animated attack arcs, sensor pulses, and impact rings. Click-drag to rotate, scroll to zoom, plus an optional **auto-rotate** toggle in TWEAKS.
 - **Map styles:** Globe, Blue Marble, Night Lights, and Flat 2D.
 - **Dark / Light theme** across the whole interface.
-- **Auto-discovered honeypot sensors** upon applying the honeypot's WebSocket URL, geolocated and placed on the map automatically.
+- **Auto-discovered honeypot sensors** upon applying the honeypot's WebSocket URL, geolocated and placed on the map automatically with activity.
 - **Live event feed** per event: timestamp, source country + city, flag, target sensor, port, source IP, event type, and detail.
 - **Click any event for the full record:** Selecting a row in the feed opens an **Event Detail** panel showing the full JSON for that event.
 - **Updated counters:** total attacks, attacks/min, unique source IPs, sensors online, login fails, login success, connection attempts, commands.
