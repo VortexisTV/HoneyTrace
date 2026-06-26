@@ -87,7 +87,7 @@ sudo chmod 750 /home/cowrie/websocket.py
 #### 3. Create a system service
 
 ```bash
-sudo nano /etc/systemd/system/cowrie-websocket.service
+sudo nano /etc/systemd/system/honeytrace-websocket.service
 ```
 
 Paste the code from [`honeytrace-websocket.service`](https://raw.githubusercontent.com/VortexisTV/HoneyTrace/refs/heads/main/honeytrace-websocket.service) in this repo):
