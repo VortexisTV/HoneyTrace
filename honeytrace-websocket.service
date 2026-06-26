@@ -10,7 +10,8 @@ Group=cowrie
 WorkingDirectory=/home/cowrie/cowrie
 Environment=COWRIE_LOG=/home/cowrie/cowrie/var/log/cowrie/cowrie.json
 Environment=OPENCANARY_LOGS=/var/tmp/opencanary.log
-ExecStart=/home/cowrie/ws-env/bin/python /home/cowrie/websocket.py
+EnvironmentFile=/etc/honeypot-bridge/reputation.env
+ExecStart=/home/cowrie/ws-env/bin/python /home/cowrie/cowrie_ws.py
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
