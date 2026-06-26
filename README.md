@@ -4,7 +4,7 @@
 
 A real-time honeypot threat intelligence map using [Cowrie](https://github.com/cowrie/cowrie), [OpenCanary](https://github.com/thinkst/opencanary), [Tailscale](https://tailscale.com/), and IP reputation enrichment. It renders incoming attacks as animated arcs on an interactive 3D globe threat map, alongside live event feed, and raw Cowrie and OpenCanary log lines.
 
-https://github.com/user-attachments/assets/db68f982-0b94-42ba-af32-3d2d90c282f3
+https://github.com/user-attachments/assets/8569f12b-d984-4376-8b2c-295423188bb2
 
 ## Features
 
