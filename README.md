@@ -128,16 +128,16 @@ Put your API keys there:
 ENABLE_SPAMHAUS=true
 SPAMHAUS_DROP_URL=https://www.spamhaus.org/drop/drop.json
 
-ENABLE_ABUSEIPDB=true
+ENABLE_ABUSEIPDB=false
 ABUSEIPDB_API_KEY=your_new_abuseipdb_key_here
 
-ENABLE_VIRUSTOTAL=true
+ENABLE_VIRUSTOTAL=false
 VIRUSTOTAL_API_KEY=your_new_virustotal_key_here
 
-ENABLE_OTX=true
+ENABLE_OTX=false
 OTX_API_KEY=your_otx_key
 
-ENABLE_THREATFOX=true
+ENABLE_THREATFOX=false
 THREATFOX_AUTH_KEY=your_threatfox_key
 
 REPUTATION_CACHE_TTL_HOURS=24
