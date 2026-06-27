@@ -1,4 +1,4 @@
-# HoneyTrace
+# HoneyRadar
 
 > 🤖 Disclaimer: This is a vibe-coded project.
 
@@ -51,7 +51,7 @@ ssh username@TAILSCALE-VPS-IP
 
 ## Quick Start
 
-1. Download `Honeytrace Attack Map.html`. Upon first opening the HTML, the status reads **OFFLINE** and the map is empty. That's expected. It will switch to **LIVE** after applying your honeypot's WebSocket URL and it visualizes real traffic.
+1. Download `HoneyRadar Attack Map.html`. Upon first opening the HTML, the status reads **OFFLINE** and the map is empty. That's expected. It will switch to **LIVE** after applying your honeypot's WebSocket URL and it visualizes real traffic.
 2. Open it in any modern browser (Chrome, Edge, Firefox, Safari).
 
 ### Setting up the live feed (WebSocket bridge) on the target machine
@@ -75,7 +75,7 @@ sudo -u cowrie /home/cowrie/ws-env/bin/pip install \
 sudo nano /home/cowrie/websocket.py
 ```
 
-Paste the code from [`websocket.py`](https://raw.githubusercontent.com/VortexisTV/HoneyTrace/refs/heads/main/websocket.py).
+Paste the code from [`websocket.py`](https://raw.githubusercontent.com/VortexisTV/HoneyRadar/refs/heads/main/websocket.py).
 
 Correct its ownership:
 
@@ -87,10 +87,10 @@ sudo chmod 750 /home/cowrie/websocket.py
 #### 3. Create a system service
 
 ```bash
-sudo nano /etc/systemd/system/honeytrace-websocket.service
+sudo nano /etc/systemd/system/honeyradar-websocket.service
 ```
 
-Paste the code from [`honeytrace-websocket.service`](https://raw.githubusercontent.com/VortexisTV/HoneyTrace/refs/heads/main/honeytrace-websocket.service) in this repo):
+Paste the code from [`honeyradar-websocket.service`](https://raw.githubusercontent.com/VortexisTV/HoneyRadar/refs/heads/main/honeyradar-websocket.service) in this repo):
 
 ```ini
 [Unit]
@@ -145,9 +145,9 @@ sudo chmod 600 /etc/honeypot-bridge/reputation.env
 > Before starting the service, make sure the honeypots are started and active!
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now honeytrace-websocket
+sudo systemctl enable --now honeyradar-websocket
 
-sudo systemctl status honeytrace-websocket --no-pager
+sudo systemctl status honeyradar-websocket --no-pager
 sudo ss -lntp | grep 8765
 ```
 
