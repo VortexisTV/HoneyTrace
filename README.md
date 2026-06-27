@@ -134,6 +134,12 @@ ABUSEIPDB_API_KEY=your_new_abuseipdb_key_here
 ENABLE_VIRUSTOTAL=true
 VIRUSTOTAL_API_KEY=your_new_virustotal_key_here
 
+ENABLE_OTX=true
+OTX_API_KEY=your_otx_key
+
+ENABLE_THREATFOX=true
+THREATFOX_AUTH_KEY=your_threatfox_key
+
 REPUTATION_CACHE_TTL_HOURS=24
 ```
 Lock it down:
