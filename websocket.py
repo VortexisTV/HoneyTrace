@@ -182,7 +182,9 @@ def env_bool(name: str, default: bool = False) -> bool:
 ENABLE_SPAMHAUS = env_bool("ENABLE_SPAMHAUS", False)
 ENABLE_ABUSEIPDB = env_bool("ENABLE_ABUSEIPDB", False)
 ENABLE_VIRUSTOTAL = env_bool("ENABLE_VIRUSTOTAL", False)
+ENABLE_THREATFOX = env_bool("ENABLE_THREATFOX", False)
 
+THREATFOX_AUTH_KEY = os.getenv("THREATFOX_AUTH_KEY", "").strip()
 ABUSEIPDB_API_KEY = os.getenv("ABUSEIPDB_API_KEY", "").strip()
 VIRUSTOTAL_API_KEY = os.getenv("VIRUSTOTAL_API_KEY", "").strip()
 
@@ -217,6 +219,28 @@ def http_json(url: str, headers: Optional[Dict[str, str]] = None, timeout: int =
         body = response.read().decode("utf-8", errors="replace")
         return json.loads(body)
 
+def http_post_json(
+    url: str,
+    payload: Dict[str, Any],
+    headers: Optional[Dict[str, str]] = None,
+    timeout: int = 8,
+) -> Any:
+    body = json.dumps(payload).encode("utf-8")
+
+    request = urllib.request.Request(
+        url,
+        data=body,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            **(headers or {}),
+        },
+        method="POST",
+    )
+
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        raw = response.read().decode("utf-8", errors="replace")
+        return json.loads(raw)
 
 def parse_http_error(exc: Exception) -> str:
     if isinstance(exc, urllib.error.HTTPError):
@@ -425,6 +449,78 @@ def check_virustotal(ip_str: str) -> Dict[str, Any]:
             "error": parse_http_error(exc),
         }
 
+def check_threatfox(ip_str: str) -> Dict[str, Any]:
+    if not ENABLE_THREATFOX or not THREATFOX_AUTH_KEY:
+        return {
+            "enabled": False,
+            "matches": 0,
+            "malware": [],
+            "tags": [],
+        }
+
+    try:
+        data = http_post_json(
+            "https://threatfox-api.abuse.ch/api/v1/",
+            {
+                "query": "search_ioc",
+                "search_term": ip_str,
+                "exact_match": True,
+            },
+            headers={
+                "Auth-Key": THREATFOX_AUTH_KEY,
+                "User-Agent": "honeyradar-bridge/1.0",
+            },
+            timeout=10,
+        )
+
+        rows = data.get("data") if isinstance(data, dict) else []
+        if not isinstance(rows, list):
+            rows = []
+
+        malware = set()
+        tags = set()
+        threat_types = set()
+        confidence_values = []
+
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+
+            for key in ("malware_printable", "malware", "malware_alias"):
+                value = row.get(key)
+                if value:
+                    malware.add(str(value))
+
+            row_tags = row.get("tags")
+            if isinstance(row_tags, list):
+                for tag in row_tags:
+                    if tag:
+                        tags.add(str(tag))
+
+            if row.get("threat_type"):
+                threat_types.add(str(row["threat_type"]))
+
+            confidence = row.get("confidence_level")
+            if isinstance(confidence, int):
+                confidence_values.append(confidence)
+
+        return {
+            "enabled": True,
+            "matches": len(rows),
+            "malware": sorted(malware),
+            "tags": sorted(tags),
+            "threat_types": sorted(threat_types),
+            "max_confidence": max(confidence_values) if confidence_values else None,
+        }
+
+    except Exception as exc:
+        return {
+            "enabled": True,
+            "matches": 0,
+            "malware": [],
+            "tags": [],
+            "error": parse_http_error(exc),
+        }
 
 def build_reputation(ip_str: str) -> Dict[str, Any]:
     now = time.time()
@@ -436,6 +532,11 @@ def build_reputation(ip_str: str) -> Dict[str, Any]:
     spamhaus = check_spamhaus(ip_str)
     abuseipdb = check_abuseipdb(ip_str)
     virustotal = check_virustotal(ip_str)
+    threatfox = check_threatfox(ip_str)
+
+    actor_names = []
+    malware_names = []
+    sources = []
 
     score = 0
 
@@ -453,14 +554,36 @@ def build_reputation(ip_str: str) -> Dict[str, Any]:
         elif vt_malicious >= 1:
             score = max(score, 50)
 
+    if threatfox.get("matches", 0) > 0:
+        sources.append("ThreatFox")
+
+        for name in threatfox.get("malware", []):
+            if name:
+                malware_names.append(name)
+
+        tf_confidence = threatfox.get("max_confidence")
+        if isinstance(tf_confidence, int):
+            if tf_confidence >= 75:
+                score = max(score, 80)
+            elif tf_confidence >= 50:
+                score = max(score, 60)
+
+    if actor_names or malware_names:
+        score = max(score, 70)
+
     malicious = score >= 70
 
     rep = {
         "score": score,
         "malicious": malicious,
+        "actor": ", ".join(sorted(set(actor_names))) if actor_names else None,
+        "malware": ", ".join(sorted(set(malware_names))) if malware_names else None,
+        "sources": sources,
+        "confidence": "low" if actor_names or malware_names else None,
         "spamhaus": spamhaus,
         "abuseipdb": abuseipdb,
         "virustotal": virustotal,
+        "threatfox": threatfox,
     }
 
     _rep_cache[ip_str] = {
@@ -493,7 +616,9 @@ async def enrich_event(event: Dict[str, Any]) -> Dict[str, Any]:
     rep = await asyncio.to_thread(build_reputation, str(src_ip))
 
     event["reputation"] = rep
-
+    event["actor"] = rep.get("actor")
+    event["malware"] = rep.get("malware")
+    event["actor_confidence"] = rep.get("confidence")
     # Flat fields for attack-map/browser compatibility.
     event["rep_score"] = rep.get("score")
     event["threat_score"] = rep.get("score")
